@@ -70,7 +70,7 @@ class Fractal {
     }
   }
 
-  double _smoothStability(Complex z, int escapeCount, int maxIters) {
+  double smoothStability(Complex z, int escapeCount, int maxIters) {
     final smoothValue = escapeCount + 1 - log(log(z.abs())) / log(2);
     final stability = smoothValue / maxIters;
     return stability.clamp(0.0, 1.0);
@@ -112,7 +112,7 @@ class Fractal {
         for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
           if (z.abs() > escapeRadius) {
             pixels[i * width + j] =
-                (_smoothStability(z, escapeCount, maxIters) * 255).toInt();
+                (smoothStability(z, escapeCount, maxIters) * 255).toInt();
             break;
           }
           z = Complex(z.real.abs(), z.imag.abs()).pow(Complex(realP, imagP)) +
@@ -160,7 +160,7 @@ class Fractal {
         for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
           if (z.abs() > escapeRadius) {
             pixels[i * width + j] =
-                (_smoothStability(z, escapeCount, maxIters) * 255).toInt();
+                (smoothStability(z, escapeCount, maxIters) * 255).toInt();
             break;
           }
           z = z.pow(Complex(realP, imagP)) + c;
