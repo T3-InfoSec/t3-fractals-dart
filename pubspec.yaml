@@ -1,0 +1,17 @@
+name: great_wall_fractal
+description: Fractal class implementation for GreatWall
+version: 1.0.0
+homepage: http://t3infosecurity.com/
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  
+  image: ^3.0.1
+  vector_math: ^2.1.0
+  complex: ^0.7.2
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
