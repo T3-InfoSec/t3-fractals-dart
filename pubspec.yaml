@@ -1,5 +1,5 @@
 name: fractal
-description: Fractal class implementation for GreatWall
+description: A generic fractal generation module for creating and rendering various types of fractals.
 version: 1.0.0
 homepage: http://t3infosecurity.com/
 environment:
