@@ -1,6 +1,6 @@
 name: fractal
 description: A generic fractal generation module for creating and rendering various types of fractals.
-version: 1.0.0
+version: 0.1.0-dev
 homepage: http://t3infosecurity.com/
 environment:
   sdk: ^3.4.0
