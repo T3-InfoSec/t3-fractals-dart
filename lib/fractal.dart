@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
+
 import './src/complex.dart';
 
 class Fractal {
