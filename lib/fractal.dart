@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import './src/complex.dart';
+import 'complex/complex.dart';
 
 class Fractal {
   static const String burningShip = 'burningship';
