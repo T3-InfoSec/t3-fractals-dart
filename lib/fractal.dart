@@ -102,9 +102,9 @@ class Fractal {
     maxIters = this.maxIters ?? maxIters;
 
     final x =
-        List.generate(width, (i) => xMin + (xMax - xMin) * i / (width - 1));
+        List.generate(width, (int idx) => xMin + (xMax - xMin) * idx / (width - 1));
     final y =
-        List.generate(height, (i) => yMin + (yMax - yMin) * i / (height - 1));
+        List.generate(height, (int idx) => yMin + (yMax - yMin) * idx / (height - 1));
 
     final pixels = Uint8List(width * height);
     for (int i = 0; i < height; i++) {
