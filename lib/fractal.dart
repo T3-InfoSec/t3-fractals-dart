@@ -20,6 +20,7 @@ class Fractal {
   int? maxIters;
 
   Uint8List? _imagePixels;
+  Uint8List? get imagePixels => _imagePixels;
 
   Fractal({
     this.funcType = burningShip,
@@ -35,7 +36,6 @@ class Fractal {
     this.maxIters,
   });
 
-  Uint8List? get imagePixels => _imagePixels;
   set imagePixels(Uint8List? pixels) => _imagePixels = pixels;
 
   void update({
