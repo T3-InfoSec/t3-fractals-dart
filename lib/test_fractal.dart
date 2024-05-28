@@ -53,7 +53,7 @@ void main() {
   List<int> palette = generateGradientPalette(256);
 
   // Generate the Mandelbrot set
-  fractal.update(funcType: Fractal.MANDELBROT, width: 800, height: 800);
+  fractal.update(funcType: Fractal.mandelbrot, width: 800, height: 800);
   Uint8List? mandelbrotPixels = fractal.imagePixels;
   if (mandelbrotPixels != null) {
     saveImage(mandelbrotPixels, 800, 800, 'mandelbrot.png', palette);
@@ -61,7 +61,7 @@ void main() {
   }
 
   // Generate the Burning Ship set
-  fractal.update(funcType: Fractal.BURNING_SHIP, width: 800, height: 800);
+  fractal.update(funcType: Fractal.burningShip, width: 800, height: 800);
   Uint8List? burningShipPixels = fractal.imagePixels;
   if (burningShipPixels != null) {
     saveImage(burningShipPixels, 800, 800, 'burningship.png', palette);
