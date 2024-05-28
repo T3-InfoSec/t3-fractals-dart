@@ -36,8 +36,6 @@ class Fractal {
     this.maxIters,
   });
 
-  set imagePixels(Uint8List? pixels) => _imagePixels = pixels;
-
   void update({
     String? funcType,
     double? xMin,
