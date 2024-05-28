@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import './src/complex.dart';
 
 class Fractal {
-  static const String BURNING_SHIP = 'burningship';
-  static const String MANDELBROT = 'mandelbrot';
+  static const String burningShip = 'burningship';
+  static const String mandelbrot = 'mandelbrot';
 
   String funcType;
   double? xMin;
@@ -22,7 +22,7 @@ class Fractal {
   Uint8List? _imagePixels;
 
   Fractal({
-    this.funcType = BURNING_SHIP,
+    this.funcType = burningShip,
     this.xMin,
     this.xMax,
     this.yMin,
@@ -63,9 +63,9 @@ class Fractal {
     this.maxIters = maxIters;
     this.funcType = funcType ?? this.funcType;
 
-    if (this.funcType == BURNING_SHIP) {
+    if (this.funcType == burningShip) {
       _imagePixels = burningshipSet();
-    } else if (this.funcType == MANDELBROT) {
+    } else if (this.funcType == mandelbrot) {
       _imagePixels = mandelbrotSet();
     } else {
       throw ArgumentError('$funcType is not supported.');
@@ -101,10 +101,10 @@ class Fractal {
     escapeRadius = this.escapeRadius ?? escapeRadius;
     maxIters = this.maxIters ?? maxIters;
 
-    final x =
-        List.generate(width, (int idx) => xMin + (xMax - xMin) * idx / (width - 1));
-    final y =
-        List.generate(height, (int idx) => yMin + (yMax - yMin) * idx / (height - 1));
+    final x = List.generate(
+        width, (int idx) => xMin + (xMax - xMin) * idx / (width - 1));
+    final y = List.generate(
+        height, (int idx) => yMin + (yMax - yMin) * idx / (height - 1));
 
     final pixels = Uint8List(width * height);
     for (int i = 0; i < height; i++) {
