@@ -52,14 +52,6 @@ void main() {
   // Generate a color palette
   List<int> palette = generateGradientPalette(256);
 
-  // Generate the Mandelbrot set
-  fractal.update(funcType: Fractal.mandelbrot, width: 800, height: 800);
-  Uint8List? mandelbrotPixels = fractal.imagePixels;
-  if (mandelbrotPixels != null) {
-    saveImage(mandelbrotPixels, 800, 800, 'mandelbrot.png', palette);
-    print('Mandelbrot fractal saved as mandelbrot.png');
-  }
-
   // Generate the Burning Ship set
   fractal.update(funcType: Fractal.burningShip, width: 800, height: 800);
   Uint8List? burningShipPixels = fractal.imagePixels;

@@ -5,7 +5,6 @@ import 'complex/complex.dart';
 
 class Fractal {
   static const String burningShip = 'burningship';
-  static const String mandelbrot = 'mandelbrot';
 
   String funcType;
   double? xMin;
@@ -63,8 +62,6 @@ class Fractal {
 
     if (this.funcType == burningShip) {
       _imagePixels = burningshipSet();
-    } else if (this.funcType == mandelbrot) {
-      _imagePixels = mandelbrotSet();
     } else {
       throw ArgumentError('$funcType is not supported.');
     }
@@ -117,53 +114,6 @@ class Fractal {
           }
           z = Complex(z.real.abs(), z.imag.abs()).pow(Complex(realP, imagP)) +
               c;
-        }
-        pixels[i * width + j] = pixels[i * width + j] ?? 255;
-      }
-    }
-    return pixels;
-  }
-
-  Uint8List mandelbrotSet({
-    double xMin = -2.2,
-    double xMax = 1,
-    double yMin = -1.2,
-    double yMax = 1.2,
-    double realP = 2.0,
-    double imagP = 0.0,
-    int width = 1024,
-    int height = 1024,
-    int escapeRadius = 4,
-    int maxIters = 30,
-  }) {
-    xMin = this.xMin ?? xMin;
-    xMax = this.xMax ?? xMax;
-    yMin = this.yMin ?? yMin;
-    yMax = this.yMax ?? yMax;
-    realP = this.realP ?? realP;
-    imagP = this.imagP ?? imagP;
-    width = this.width ?? width;
-    height = this.height ?? height;
-    escapeRadius = this.escapeRadius ?? escapeRadius;
-    maxIters = this.maxIters ?? maxIters;
-
-    final x =
-        List.generate(width, (i) => xMin + (xMax - xMin) * i / (width - 1));
-    final y =
-        List.generate(height, (i) => yMin + (yMax - yMin) * i / (height - 1));
-
-    final pixels = Uint8List(width * height);
-    for (int i = 0; i < height; i++) {
-      for (int j = 0; j < width; j++) {
-        var c = Complex(x[j], y[i]);
-        var z = c;
-        for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
-          if (z.abs() > escapeRadius) {
-            pixels[i * width + j] =
-                (_smoothStability(z, escapeCount, maxIters) * 255).toInt();
-            break;
-          }
-          z = z.pow(Complex(realP, imagP)) + c;
         }
         pixels[i * width + j] = pixels[i * width + j] ?? 255;
       }
