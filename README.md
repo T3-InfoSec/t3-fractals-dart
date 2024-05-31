@@ -39,7 +39,7 @@ fractal.update(funcType: Fractal.burningShip, width: 800, height: 800);
 Run the following command to generate a burning ship fractal image in the parent directory.
 
 ```bash
-dart lib/test_fractal.dart'
+dart lib/test_fractal.dart
 ```
 
 ## Additional information
