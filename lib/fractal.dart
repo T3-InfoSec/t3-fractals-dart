@@ -68,8 +68,8 @@ class Fractal {
   }
 
   double _smoothStability(Complex z, int escapeCount, int maxIters) {
-    final smoothValue = escapeCount + 1 - log(log(z.abs())) / log(2);
-    final stability = smoothValue / maxIters;
+    var smoothValue = escapeCount + 1 - log(log(z.abs())) / log(2);
+    var stability = smoothValue / maxIters;
     return stability.clamp(0.0, 1.0);
   }
 
