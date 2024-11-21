@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'complex/complex.dart';
+import 'package:complex/complex.dart';
 
 class Fractal {
   static const String burningShip = 'burningship';
@@ -112,10 +112,11 @@ class Fractal {
                 (_smoothStability(z, escapeCount, maxIters) * 255).toInt();
             break;
           }
-          z = Complex(z.real.abs(), z.imag.abs()).pow(Complex(realP, imagP)) +
+          z = Complex(z.real.abs(), z.imaginary.abs())
+                  .power(Complex(realP, imagP)) +
               c;
         }
-        pixels[i * width + j] = pixels[i * width + j] ?? 255;
+        pixels[i * width + j] = pixels[i * width + j];
       }
     }
     return pixels;
