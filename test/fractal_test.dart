@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:fractal/main.dart';
+import 'package:fractal/fractal.dart';
 import 'package:test/test.dart';
 
 void main() {

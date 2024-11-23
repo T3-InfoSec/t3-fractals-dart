@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:fractal/main.dart';
+import 'package:fractal/fractal.dart';
 import 'package:image/image.dart' as img;
 
 // Function to generate a gradient color palette

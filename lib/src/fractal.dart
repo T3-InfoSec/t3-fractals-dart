@@ -1,4 +1,4 @@
-part of '../main.dart';
+part of '../fractal.dart';
 
 /// The `Fractal` class generates fractals based on a specified function type
 /// (e.g., Burning Ship). It contains methods for generating and updating
