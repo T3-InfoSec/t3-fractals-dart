@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:fractal/main.dart';
 import 'package:image/image.dart' as img;
-import 'fractal.dart';
 
 // Function to generate a gradient color palette
 List<int> generateGradientPalette(int length) {
