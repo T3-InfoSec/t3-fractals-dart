@@ -1,8 +1,4 @@
-library fractal;
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved.
 
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:complex/complex.dart';
-
-part 'src/fractal.dart';
+export 'src/fractal_base.dart';

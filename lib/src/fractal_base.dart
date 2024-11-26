@@ -1,4 +1,7 @@
-part of '../fractal.dart';
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:complex/complex.dart';
 
 /// The `Fractal` class generates fractals based on a specified function type
 /// (e.g., Burning Ship). It contains methods for generating and updating
