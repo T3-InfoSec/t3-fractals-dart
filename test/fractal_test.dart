@@ -5,13 +5,19 @@ import 'package:test/test.dart';
 void main() {
   group('Fractal Tests', () {
     test('Default initialization', () {
-      final fractal = Fractal();
+      final fractal = Fractal(
+        realP: 2.178174161131,
+        imagP: 0.178174161131
+      );
       expect(fractal.funcType, equals(Fractal.burningShip));
       expect(fractal.imagePixels, isNull);
     });
 
     test('Update method', () {
-      final fractal = Fractal();
+      final fractal = Fractal(
+        realP: 2.178174161131,
+        imagP: 0.178174161131
+      );
       fractal.update(
         xMin: -2.0,
         xMax: 2.0,
@@ -35,7 +41,10 @@ void main() {
     });
 
     test('Unsupported funcType in update', () {
-      final fractal = Fractal();
+      final fractal = Fractal(
+        realP: 2.178174161131,
+        imagP: 0.178174161131
+      );
       expect(
         () => fractal.update(funcType: 'unsupported'),
         throwsA(isA<ArgumentError>()),
@@ -50,6 +59,8 @@ void main() {
         yMax: 0.8,
         width: 100,
         height: 100,
+        realP: 2.178174161131,
+        imagP: 0.178174161131,
         escapeRadius: 4,
         maxIters: 30,
       );
@@ -67,6 +78,8 @@ void main() {
         yMax: 1.0,
         width: 10,
         height: 10,
+        realP: 2.178174161131,
+        imagP: 0.178174161131,
       );
 
       final pixels = fractal.burningshipSet();
