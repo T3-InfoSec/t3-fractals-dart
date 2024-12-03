@@ -7,10 +7,10 @@ Makefile
 cmake_install.cmake
 
 # Xcode tooling generated via `cmake -G Xcode .`
-hello_library.xcodeproj/
+burningship.xcodeproj/
 
 # Xcode generated build and output directories
-hello_library.build/
+burningship.build/
 
 # Generated test binary
 hello_test
