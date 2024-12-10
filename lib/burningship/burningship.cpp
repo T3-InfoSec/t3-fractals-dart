@@ -53,4 +53,30 @@ extern "C" {
     void freePixels(uint8_t* pixels) {
         delete[] pixels;
     }
+
+    uint8_t** generateAnimation(int n, double xMin, double xMax, double yMin, double yMax,
+                            double A, double B, double phi, int k, int l,
+                            int width, int height, int escapeRadius, int maxIters) {
+        // Allocate memory for the animation frames
+        uint8_t** frames = new uint8_t*[n];
+
+        #pragma omp parallel for // Use OpenMP for parallelization (if supported)
+        for (int i = 0; i < n; i++) {
+            // Compute the oscillating real and imaginary parts for each frame
+            double rpi = A * std::cos(phi + 2 * M_PI * i * k / n);
+            double ipi = B * std::sin(2 * M_PI * i * l / n);
+
+            // Generate the fractal frame with the shifted real and imaginary parts
+            frames[i] = burningshipSet(xMin, xMax, yMin, yMax, rpi, ipi, width, height, escapeRadius, maxIters);
+        }
+
+        return frames;
+    }
+
+    void freeAnimation(uint8_t** frames, int n) {
+        for (int i = 0; i < n; i++) {
+            delete[] frames[i];
+        }
+        delete[] frames;
+    }
 }

@@ -2,3 +2,5 @@ LIBRARY   burningship
 EXPORTS
    burningshipSet
    freePixels
+   generateAnimation
+   freeAnimation

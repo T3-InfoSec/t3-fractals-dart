@@ -21,6 +21,24 @@ class Fractal {
       int maxIters) _burningshipSet;
 
   late final void Function(ffi.Pointer<ffi.Uint8>) _freePixels;
+  late final ffi.Pointer<ffi.Pointer<ffi.Uint8>> Function(
+      int n,
+      double A,
+      double B,
+      double phi,
+      int k,
+      int l,
+      double xMin,
+      double xMax,
+      double yMin,
+      double yMax,
+      int width,
+      int height,
+      int escapeRadius,
+      int maxIters) _generateAnimation;
+
+  late final void Function(ffi.Pointer<ffi.Pointer<ffi.Uint8>>, int n)
+      _freeAnimation;
 
   // Fractal properties
   String funcType;
@@ -84,6 +102,31 @@ class Fractal {
         .lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Uint8>)>>(
             'freePixels')
         .asFunction();
+    _generateAnimation = _dylib
+        .lookup<
+            ffi.NativeFunction<
+                ffi.Pointer<ffi.Pointer<ffi.Uint8>> Function(
+                    ffi.Int32,
+                    ffi.Double,
+                    ffi.Double,
+                    ffi.Double,
+                    ffi.Int32,
+                    ffi.Int32,
+                    ffi.Double,
+                    ffi.Double,
+                    ffi.Double,
+                    ffi.Double,
+                    ffi.Int32,
+                    ffi.Int32,
+                    ffi.Int32,
+                    ffi.Int32)>>('generateAnimation')
+        .asFunction();
+    _freeAnimation = _dylib
+        .lookup<
+            ffi.NativeFunction<
+                ffi.Void Function(ffi.Pointer<ffi.Pointer<ffi.Uint8>>,
+                    ffi.Int32)>>('freeAnimation')
+        .asFunction();
   }
 
   void update({
@@ -131,7 +174,56 @@ class Fractal {
       escapeRadius ?? 4,
       maxIters ?? 1000,
     );
+    final result = pointer.asTypedList(width! * height!);
+    _freePixels(pointer);
+    return result;
+  }
 
-    return pointer.asTypedList(width! * height!);
+  List<Uint8List> generateAnimation({
+    required int n,
+    required double A,
+    required double B,
+    required double phi,
+    required int k,
+    required int l,
+  }) {
+    final framesPointer = _generateAnimation(
+      n,
+      A,
+      B,
+      phi,
+      k,
+      l,
+      xMin ?? -2.5,
+      xMax ?? 2.0,
+      yMin ?? -2.0,
+      yMax ?? 0.8,
+      width ?? 1024,
+      height ?? 1024,
+      escapeRadius ?? 4,
+      maxIters ?? 1000,
+    );
+    final frameSize = width! * height!;
+    final totalSize = n * frameSize;
+
+    // Manually copy the raw data into a Dart Uint8List
+    final rawData = Uint8List(totalSize);
+    final rawDataPointer = framesPointer.cast<ffi.Uint8>();
+    for (int i = 0; i < totalSize; i++) {
+      rawData[i] = (rawDataPointer + i).value; // Use pointer arithmetic
+    }
+
+    // Split the raw data into individual frames
+    final frames = List<Uint8List>.generate(
+      n,
+      (i) => Uint8List.fromList(
+        rawData.sublist(i * frameSize, (i + 1) * frameSize),
+      ),
+    );
+
+    // Free the memory allocated in the native function
+    _freeAnimation(framesPointer, n);
+
+    return frames;
   }
 }
