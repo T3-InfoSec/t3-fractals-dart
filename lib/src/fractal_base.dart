@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:complex/complex.dart';
+import 'package:image/image.dart' as img;
 
 /// The `Fractal` class generates fractals based on a specified function type
 /// (e.g., Burning Ship). It contains methods for generating and updating
@@ -130,10 +131,12 @@ class Fractal {
   ///
   /// Returns:
   /// - A double representing the smooth stability value, clamped between 0.0 and 1.0.
+  /// Smooth stability value for anti-aliasing and smooth coloring.
   double _smoothStability(Complex z, int escapeCount, int maxIters) {
-    var smoothValue = escapeCount + 1 - log(log(z.abs())) / log(2);
-    var stability = smoothValue / maxIters;
-    return stability.clamp(0.0, 1.0);
+    var logZn = log(z.abs());
+    var nu = log(logZn) / log(2);
+    var smoothValue = escapeCount + 1 - nu;
+    return smoothValue / maxIters;
   }
 
   /// Generates the Burning Ship fractal set and returns the pixel data.
@@ -150,6 +153,35 @@ class Fractal {
   ///
   /// Returns:
   /// - A [Uint8List] containing the pixel data for the generated fractal image.
+  /// Smooth stability calculation for anti-aliasing
+
+  /// Map stability to fire-like colors
+  int _fireToWhiteColor(double stability) {
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (stability < 0.4) {
+      // Fire glow: Black -> Red -> Orange
+      red = (255 * pow(stability / 0.4, 1.0)).toInt();
+      green = (127 * pow(stability / 0.4, 1.5)).toInt();
+      blue = 0;
+    } else if (stability < 0.8) {
+      // Transition: Orange -> Yellow -> Light pastel
+      red = 255;
+      green = (255 * (stability - 0.4) / 0.4).toInt();
+      blue = (200 * (stability - 0.4) / 0.4).toInt();
+    } else {
+      // Outside: Light pastel -> White
+      double fadeToWhite = (stability - 0.8) / 0.2;
+      red = 255;
+      green = 255 - ((255 - green) * fadeToWhite).toInt();
+      blue = 255 - ((255 - blue) * fadeToWhite).toInt();
+    }
+
+    return img.getColor(red, green, blue);
+  }
+
+  /// Generate the Burning Ship fractal image
   Uint8List burningshipSet({
     double xMin = -2.5,
     double xMax = 2.0,
@@ -173,40 +205,44 @@ class Fractal {
     height = this.height ?? height;
     escapeRadius = this.escapeRadius ?? escapeRadius;
     maxIters = this.maxIters ?? maxIters;
-
     // Create x and y coordinates for the image plane
     final x = List.generate(
-        width, (int idx) => xMin + (xMax - xMin) * idx / (width - 1));
+      width,
+      (idx) => xMin + (xMax - xMin) * idx / (width - 1),
+    );
     final y = List.generate(
-        height, (int idx) => yMin + (yMax - yMin) * idx / (height - 1));
+      height,
+      (idx) => yMin + (yMax - yMin) * idx / (height - 1),
+    );
 
-    // Initialize pixel data array
-    final pixels = Uint8List(width * height);
+    final pixels = Uint8List(width * height * 4); // RGBA output
 
-    // Iterate through each pixel to compute the fractal
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        // Complex number for the current point
         var c = Complex(x[j], y[i]);
-        // Initial value of z
         var z = c;
+
+        int color = img.getColor(0, 0, 0, 255); // Default black for non-escaped
         for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
-          // Check if the point has escaped the set
           if (z.abs() > escapeRadius) {
-            // Assign color based on stability of the point
-            pixels[i * width + j] =
-                (_smoothStability(z, escapeCount, maxIters) * 255).toInt();
+            double stability =
+                _smoothStability(z, escapeCount, maxIters).clamp(0.0, 1.0);
+            color = _fireToWhiteColor(stability);
             break;
           }
           z = Complex(z.real.abs(), z.imaginary.abs())
                   .power(Complex(realP, imagP)) +
               c;
         }
-        // Ensure the pixel value is correctly assigned
-        pixels[i * width + j] = pixels[i * width + j];
+
+        int pixelIndex = (i * width + j) * 4;
+        pixels[pixelIndex] = img.getRed(color);
+        pixels[pixelIndex + 1] = img.getGreen(color);
+        pixels[pixelIndex + 2] = img.getBlue(color);
+        pixels[pixelIndex + 3] = 255; // Alpha
       }
     }
-    // Return the generated pixel data
+
     return pixels;
   }
 
