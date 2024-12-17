@@ -1,0 +1,62 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:fractal/fractal.dart';
+import 'package:image/image.dart' as img;
+
+void main() async {
+  // Initialize the fractal generator
+  var fractal = Fractal(
+    funcType: Fractal.burningShip,
+    width: 500,
+    height: 500,
+    xMin: -2.5,
+    xMax: 2.0,
+    yMin: -2,
+    yMax: 0.8,
+    escapeRadius: 3,
+    maxIters: 100,
+  );
+
+  // Parameters for the animation
+  int numFrames = 10; // Total frames
+  double amplitudeA = 0.5; // Amplitude for real part oscillation
+  double amplitudeB = 0.5; // Amplitude for imaginary part oscillation
+  double phaseOffset = 0; // Phase offset
+  int frequencyK = 1; // Frequency multiplier for real part
+  int frequencyL = 1; // Frequency multiplier for imaginary part
+  int width = 500; // Frame width
+  int height = 500; // Frame height
+
+  // Generate the animation frames
+  List<Uint8List> frames = fractal.generateAnimation(
+    n: numFrames,
+    A: amplitudeA,
+    B: amplitudeB,
+    phi: phaseOffset,
+    k: frequencyK,
+    l: frequencyL,
+    width: width,
+    height: height,
+  );
+
+  // Create an animated GIF
+  final gifEncoder = img.GifEncoder();
+
+  for (int i = 0; i < frames.length; i++) {
+    final image = img.Image.fromBytes(
+      width,
+      height,
+      frames[i],
+      format: img.Format.rgba,
+    );
+
+    // Add the frame to the GIF encoder
+    gifEncoder.addFrame(image, duration: 2); // Duration in milliseconds
+  }
+
+  // Save the animated GIF to a file
+  final gifFile = File('fractal_animation-1.gif');
+  gifFile.writeAsBytesSync(gifEncoder.finish()!);
+
+  print('GIF animation saved as fractal_animation.gif');
+}
