@@ -39,7 +39,9 @@ void main() async {
     height: height,
   );
 
-  // Save each frame as a PNG file
+  // Create an animated GIF
+  final gifEncoder = img.GifEncoder();
+
   for (int i = 0; i < frames.length; i++) {
     final image = img.Image.fromBytes(
       width,
@@ -47,8 +49,14 @@ void main() async {
       frames[i],
       format: img.Format.rgba,
     );
-    File('frame_$i.png').writeAsBytesSync(img.encodePng(image));
+
+    // Add the frame to the GIF encoder
+    gifEncoder.addFrame(image, duration: 100); // Duration in milliseconds
   }
 
-  print('Animation frames saved as PNG files!');
+  // Save the animated GIF to a file
+  final gifFile = File('fractal_animation.gif');
+  gifFile.writeAsBytesSync(gifEncoder.finish()!);
+
+  print('GIF animation saved as fractal_animation.gif');
 }
