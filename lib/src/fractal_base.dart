@@ -189,10 +189,10 @@ class Fractal {
     double yMax = 0.8,
     double realP = 2.0,
     double imagP = 0.0,
-    int width = 1024,
-    int height = 1024,
-    int escapeRadius = 4,
-    int maxIters = 30,
+    int width = 500,
+    int height = 500,
+    int escapeRadius = 3,
+    int maxIters = 100,
   }) {
     // Use the class's properties if they're not null
     xMin = this.xMin ?? xMin;
@@ -265,8 +265,8 @@ class Fractal {
     required double phi,
     required int k,
     required int l,
-    int width = 800,
-    int height = 800,
+    int width = 500,
+    int height = 500,
   }) {
     final frames = <Uint8List>[];
 

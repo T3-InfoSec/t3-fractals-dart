@@ -7,25 +7,25 @@ void main() async {
   // Initialize the fractal generator
   var fractal = Fractal(
     funcType: Fractal.burningShip,
-    width: 800,
-    height: 800,
+    width: 500,
+    height: 500,
     xMin: -2.5,
     xMax: 2.0,
     yMin: -2,
     yMax: 0.8,
-    escapeRadius: 4,
+    escapeRadius: 3,
     maxIters: 100,
   );
 
   // Parameters for the animation
-  int numFrames = 60; // Total frames
+  int numFrames = 10; // Total frames
   double amplitudeA = 0.5; // Amplitude for real part oscillation
   double amplitudeB = 0.5; // Amplitude for imaginary part oscillation
   double phaseOffset = 0; // Phase offset
   int frequencyK = 1; // Frequency multiplier for real part
   int frequencyL = 1; // Frequency multiplier for imaginary part
-  int width = 800; // Frame width
-  int height = 800; // Frame height
+  int width = 500; // Frame width
+  int height = 500; // Frame height
 
   // Generate the animation frames
   List<Uint8List> frames = fractal.generateAnimation(
@@ -51,11 +51,11 @@ void main() async {
     );
 
     // Add the frame to the GIF encoder
-    gifEncoder.addFrame(image, duration: 100); // Duration in milliseconds
+    gifEncoder.addFrame(image, duration: 2); // Duration in milliseconds
   }
 
   // Save the animated GIF to a file
-  final gifFile = File('fractal_animation.gif');
+  final gifFile = File('fractal_animation-1.gif');
   gifFile.writeAsBytesSync(gifEncoder.finish()!);
 
   print('GIF animation saved as fractal_animation.gif');

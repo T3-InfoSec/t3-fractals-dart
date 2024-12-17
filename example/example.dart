@@ -15,13 +15,13 @@ void saveFractalImage(
 void main() {
   // Generate the fractal
   final fractal = Fractal(
-    width: 800,
-    height: 800,
+    width: 500,
+    height: 500,
     maxIters: 100,
   );
   Uint8List fractalPixels = fractal.burningshipSet();
 
   // Save the fractal as a PNG image
-  saveFractalImage(fractalPixels, 800, 800, 'burningship_fire.png');
+  saveFractalImage(fractalPixels, 500, 500, 'burningship_fire.png');
   print('Fractal saved as burningship_fire.png');
 }
