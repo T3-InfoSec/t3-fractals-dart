@@ -12,14 +12,20 @@ void saveFractalImage(
   File(fileName).writeAsBytesSync(png);
 }
 
-void main() {
+Future<void> main() async {
   // Generate the fractal
+
   final fractal = Fractal(
     width: 500,
     height: 500,
     maxIters: 100,
   );
-  Uint8List fractalPixels = fractal.burningshipSet();
+  Stopwatch timer = Stopwatch()..start();
+
+  Uint8List fractalPixels = await fractal.burningshipSet();
+  // Stop the timer after generating frames
+  timer.stop();
+  print('Animation frames generated in ${timer.elapsedMilliseconds} ms.');
 
   // Save the fractal as a PNG image
   saveFractalImage(fractalPixels, 500, 500, 'burningship_fire.png');

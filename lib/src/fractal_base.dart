@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:complex/complex.dart';
+import 'dart:isolate';
 import 'package:image/image.dart' as img;
 
 /// The `Fractal` class generates fractals based on a specified function type
@@ -32,7 +33,7 @@ class Fractal {
   int? maxIters;
 
   // Internal variable for holding image pixels
-  Uint8List? _imagePixels;
+  Future<Uint8List>? _imagePixels;
 
   /// A getter for accessing the image pixel data.
   ///
@@ -40,7 +41,7 @@ class Fractal {
   ///
   /// Returns:
   /// - A [Uint8List] containing the pixel data for the fractal image.
-  Uint8List? get imagePixels => _imagePixels;
+  Future<Uint8List>? get imagePixels => _imagePixels;
 
   /// Constructor for initializing the fractal with optional parameters.
   /// Defaults are set for the fractal parameters.
@@ -182,47 +183,30 @@ class Fractal {
   }
 
   /// Generate the Burning Ship fractal image
-  Uint8List burningshipSet({
-    double xMin = -2.5,
-    double xMax = 2.0,
-    double yMin = -2,
-    double yMax = 0.8,
-    double realP = 2.0,
-    double imagP = 0.0,
-    int width = 500,
-    int height = 500,
-    int escapeRadius = 3,
-    int maxIters = 100,
-  }) {
-    // Use the class's properties if they're not null
-    xMin = this.xMin ?? xMin;
-    xMax = this.xMax ?? xMax;
-    yMin = this.yMin ?? yMin;
-    yMax = this.yMax ?? yMax;
-    realP = this.realP ?? realP;
-    imagP = this.imagP ?? imagP;
-    width = this.width ?? width;
-    height = this.height ?? height;
-    escapeRadius = this.escapeRadius ?? escapeRadius;
-    maxIters = this.maxIters ?? maxIters;
-    // Create x and y coordinates for the image plane
-    final x = List.generate(
-      width,
-      (idx) => xMin + (xMax - xMin) * idx / (width - 1),
-    );
-    final y = List.generate(
-      height,
-      (idx) => yMin + (yMax - yMin) * idx / (height - 1),
-    );
+  Future<Uint8List> _processSegment(Map<String, dynamic> args) async {
+    final int startRow = args['startRow'];
+    final int endRow = args['endRow'];
+    final int width = args['width'];
+    final int height = args['height'];
+    final double xMin = args['xMin'];
+    final double xMax = args['xMax'];
+    final double yMin = args['yMin'];
+    final double yMax = args['yMax'];
+    final double realP = args['realP'];
+    final double imagP = args['imagP'];
+    final int escapeRadius = args['escapeRadius'];
+    final int maxIters = args['maxIters'];
 
-    final pixels = Uint8List(width * height * 4); // RGBA output
+    final pixels = Uint8List(width * (endRow - startRow) * 4); // RGBA output
 
-    for (int i = 0; i < height; i++) {
+    for (int i = startRow; i < endRow; i++) {
       for (int j = 0; j < width; j++) {
-        var c = Complex(x[j], y[i]);
+        double x = xMin + (xMax - xMin) * j / (width - 1);
+        double y = yMin + (yMax - yMin) * i / (height - 1);
+        var c = Complex(x, y);
         var z = c;
 
-        int color = img.getColor(0, 0, 0, 255); // Default black for non-escaped
+        int color = 0xFF000000; // Default black for non-escaped
         for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
           if (z.abs() > escapeRadius) {
             double stability =
@@ -235,12 +219,63 @@ class Fractal {
               c;
         }
 
-        int pixelIndex = (i * width + j) * 4;
-        pixels[pixelIndex] = img.getRed(color);
-        pixels[pixelIndex + 1] = img.getGreen(color);
-        pixels[pixelIndex + 2] = img.getBlue(color);
+        int pixelIndex = ((i - startRow) * width + j) * 4;
+        pixels[pixelIndex] = (color >> 16) & 0xFF; // Red
+        pixels[pixelIndex + 1] = (color >> 8) & 0xFF; // Green
+        pixels[pixelIndex + 2] = color & 0xFF; // Blue
         pixels[pixelIndex + 3] = 255; // Alpha
       }
+    }
+
+    return pixels;
+  }
+
+  Future<Uint8List> burningshipSet({
+    double xMin = -2.5,
+    double xMax = 2.0,
+    double yMin = -2,
+    double yMax = 0.8,
+    double realP = 2.0,
+    double imagP = 0.0,
+    int width = 500,
+    int height = 500,
+    int escapeRadius = 3,
+    int maxIters = 100,
+  }) async {
+    const int numIsolates = 4; // Number of isolates to use
+    int rowsPerIsolate = height ~/ numIsolates;
+    List<Future<Uint8List>> futures = [];
+
+    for (int i = 0; i < numIsolates; i++) {
+      int startRow = i * rowsPerIsolate;
+      int endRow = (i == numIsolates - 1) ? height : startRow + rowsPerIsolate;
+
+      futures.add(Isolate.run(() => _processSegment({
+            'startRow': startRow,
+            'endRow': endRow,
+            'width': width,
+            'height': height,
+            'xMin': xMin,
+            'xMax': xMax,
+            'yMin': yMin,
+            'yMax': yMax,
+            'realP': realP,
+            'imagP': imagP,
+            'escapeRadius': escapeRadius,
+            'maxIters': maxIters,
+          })));
+    }
+
+    List<Uint8List> results = await Future.wait(futures);
+    final pixels = Uint8List(width * height * 4);
+
+    for (int i = 0; i < numIsolates; i++) {
+      pixels.setRange(
+          i * rowsPerIsolate * width * 4,
+          (i == numIsolates - 1 ? height : (i + 1) * rowsPerIsolate) *
+              width *
+              4,
+          results[i]);
     }
 
     return pixels;
@@ -258,7 +293,7 @@ class Fractal {
   /// Returns:
   /// - A list of `Uint8List` objects representing the animation frames.
 
-  List<Uint8List> generateAnimation({
+  List<Future<Uint8List>> generateAnimation({
     required int n,
     required double A,
     required double B,
@@ -268,7 +303,7 @@ class Fractal {
     int width = 500,
     int height = 500,
   }) {
-    final frames = <Uint8List>[];
+    final frames = <Future<Uint8List>>[];
 
     for (int i = 0; i < n; i++) {
       final rpi = A * cos(phi + 2 * pi * i * k / n);

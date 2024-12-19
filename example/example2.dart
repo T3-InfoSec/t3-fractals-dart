@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:fractal/fractal.dart';
 import 'package:image/image.dart' as img;
+import 'dart:math';
 
 void main() async {
   // Initialize the fractal generator
@@ -18,17 +19,19 @@ void main() async {
   );
 
   // Parameters for the animation
-  int numFrames = 10; // Total frames
-  double amplitudeA = 0.5; // Amplitude for real part oscillation
-  double amplitudeB = 0.5; // Amplitude for imaginary part oscillation
-  double phaseOffset = 0; // Phase offset
+  int numFrames = 30; // Total frames
+  double amplitudeA = 0.25; // Amplitude for real part oscillation
+  double amplitudeB = 0.25; // Amplitude for imaginary part oscillation
+  double phaseOffset = pi / 4; // Phase offset
   int frequencyK = 1; // Frequency multiplier for real part
   int frequencyL = 1; // Frequency multiplier for imaginary part
   int width = 500; // Frame width
   int height = 500; // Frame height
 
   // Generate the animation frames
-  List<Uint8List> frames = fractal.generateAnimation(
+  Stopwatch timer = Stopwatch()..start();
+
+  List<Future<Uint8List>> futureFrames = fractal.generateAnimation(
     n: numFrames,
     A: amplitudeA,
     B: amplitudeB,
@@ -38,6 +41,12 @@ void main() async {
     width: width,
     height: height,
   );
+
+  List<Uint8List> frames = await Future.wait(futureFrames);
+
+  // Stop the timer after generating frames
+  timer.stop();
+  print('Animation frames generated in ${timer.elapsedMilliseconds} ms.');
 
   // Create an animated GIF
   final gifEncoder = img.GifEncoder();
@@ -51,7 +60,7 @@ void main() async {
     );
 
     // Add the frame to the GIF encoder
-    gifEncoder.addFrame(image, duration: 2); // Duration in milliseconds
+    gifEncoder.addFrame(image, duration: 17); // Duration in milliseconds
   }
 
   // Save the animated GIF to a file
