@@ -206,7 +206,7 @@ class Fractal {
         var c = Complex(x, y);
         var z = c;
 
-        int color = 0xFF000000; // Default black for non-escaped
+        int color = img.getColor(0, 0, 0, 255); // Default black for non-escaped
         for (int escapeCount = 0; escapeCount < maxIters; escapeCount++) {
           if (z.abs() > escapeRadius) {
             double stability =
@@ -220,9 +220,9 @@ class Fractal {
         }
 
         int pixelIndex = ((i - startRow) * width + j) * 4;
-        pixels[pixelIndex] = (color >> 16) & 0xFF; // Red
-        pixels[pixelIndex + 1] = (color >> 8) & 0xFF; // Green
-        pixels[pixelIndex + 2] = color & 0xFF; // Blue
+        pixels[pixelIndex] = img.getRed(color); // Red
+        pixels[pixelIndex + 1] = img.getGreen(color); // Green
+        pixels[pixelIndex + 2] = img.getBlue(color); // Blue
         pixels[pixelIndex + 3] = 255; // Alpha
       }
     }
@@ -293,16 +293,16 @@ class Fractal {
   /// Returns:
   /// - A list of `Uint8List` objects representing the animation frames.
 
-  List<Future<Uint8List>> generateAnimation({
+  Future<List<Uint8List>> generateAnimation({
     required int n,
     required double A,
     required double B,
     required double phi,
-    required int k,
-    required int l,
+    required double k,
+    required double l,
     int width = 500,
     int height = 500,
-  }) {
+  }) async {
     final frames = <Future<Uint8List>>[];
 
     for (int i = 0; i < n; i++) {
@@ -320,6 +320,7 @@ class Fractal {
       );
       frames.add(frame);
     }
-    return frames;
+    List<Uint8List> framesV = await Future.wait(frames);
+    return framesV;
   }
 }

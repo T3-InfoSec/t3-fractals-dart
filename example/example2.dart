@@ -19,19 +19,19 @@ void main() async {
   );
 
   // Parameters for the animation
-  int numFrames = 30; // Total frames
-  double amplitudeA = 0.25; // Amplitude for real part oscillation
-  double amplitudeB = 0.25; // Amplitude for imaginary part oscillation
+  int numFrames = 120; // Total frames
+  double amplitudeA = 1; // Amplitude for real part oscillation
+  double amplitudeB = 0.8; // Amplitude for imaginary part oscillation
   double phaseOffset = pi / 4; // Phase offset
-  int frequencyK = 1; // Frequency multiplier for real part
-  int frequencyL = 1; // Frequency multiplier for imaginary part
+  double frequencyK = 2; // Frequency multiplier for real part
+  double frequencyL = 3; // Frequency multiplier for imaginary part
   int width = 500; // Frame width
   int height = 500; // Frame height
 
   // Generate the animation frames
   Stopwatch timer = Stopwatch()..start();
 
-  List<Future<Uint8List>> futureFrames = fractal.generateAnimation(
+  List<Uint8List> frames = await fractal.generateAnimation(
     n: numFrames,
     A: amplitudeA,
     B: amplitudeB,
@@ -41,8 +41,6 @@ void main() async {
     width: width,
     height: height,
   );
-
-  List<Uint8List> frames = await Future.wait(futureFrames);
 
   // Stop the timer after generating frames
   timer.stop();
