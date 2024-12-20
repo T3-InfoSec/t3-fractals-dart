@@ -46,24 +46,48 @@ void main() async {
   timer.stop();
   print('Animation frames generated in ${timer.elapsedMilliseconds} ms.');
 
-  // Create an animated GIF
-  final gifEncoder = img.GifEncoder();
+  // Save the frames as images
+  String outputDir = 'output/frames';
+  Directory(outputDir).createSync(recursive: true);
 
   for (int i = 0; i < frames.length; i++) {
-    final image = img.Image.fromBytes(
-      width,
-      height,
-      frames[i],
-      format: img.Format.rgba,
-    );
-
-    // Add the frame to the GIF encoder
-    gifEncoder.addFrame(image, duration: 17); // Duration in milliseconds
+    final image =
+        img.Image.fromBytes(width, height, frames[i], format: img.Format.rgba);
+    final filePath = '$outputDir/frame_${i.toString().padLeft(4, '0')}.png';
+    File(filePath).writeAsBytesSync(img.encodePng(image));
   }
 
-  // Save the animated GIF to a file
-  final gifFile = File('fractal_animation-1.gif');
-  gifFile.writeAsBytesSync(gifEncoder.finish()!);
+  print('Frames saved to $outputDir.');
 
-  print('GIF animation saved as fractal_animation.gif');
+  // Encode the frames into an MP4 video using FFmpeg
+  String outputVideo = 'fractal_animation.mp4';
+  await encodeVideo(outputDir, outputVideo, fps: 30);
+
+  print('MP4 video saved as $outputVideo.');
+}
+
+// Function to encode frames into a video
+Future<void> encodeVideo(String framesDir, String outputFile,
+    {required int fps}) async {
+  final result = await Process.run('ffmpeg', [
+    '-framerate',
+    fps.toString(),
+    '-i',
+    '$framesDir/frame_%04d.png',
+    '-c:v',
+    'libx264',
+    '-preset',
+    'slow',
+    '-crf',
+    '18',
+    '-pix_fmt',
+    'yuv420p',
+    outputFile,
+  ]);
+
+  if (result.exitCode == 0) {
+    print('Video encoding successful.');
+  } else {
+    print('Video encoding failed: ${result.stderr}');
+  }
 }
