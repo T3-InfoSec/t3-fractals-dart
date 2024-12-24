@@ -5,19 +5,13 @@ import 'package:test/test.dart';
 void main() {
   group('Fractal Tests', () {
     test('Default initialization', () {
-      final fractal = Fractal(
-        realP: 2.178174161131,
-        imagP: 0.178174161131
-      );
+      final fractal = Fractal(realP: 2.178174161131, imagP: 0.178174161131);
       expect(fractal.funcType, equals(Fractal.burningShip));
       expect(fractal.imagePixels, isNull);
     });
 
     test('Update method', () {
-      final fractal = Fractal(
-        realP: 2.178174161131,
-        imagP: 0.178174161131
-      );
+      final fractal = Fractal(realP: 2.178174161131, imagP: 0.178174161131);
       fractal.update(
         xMin: -2.0,
         xMax: 2.0,
@@ -41,17 +35,14 @@ void main() {
     });
 
     test('Unsupported funcType in update', () {
-      final fractal = Fractal(
-        realP: 2.178174161131,
-        imagP: 0.178174161131
-      );
+      final fractal = Fractal(realP: 2.178174161131, imagP: 0.178174161131);
       expect(
         () => fractal.update(funcType: 'unsupported'),
         throwsA(isA<ArgumentError>()),
       );
     });
 
-    test('burningshipSet generates pixel data', () {
+    test('burningshipSet generates pixel data', () async {
       final fractal = Fractal(
         xMin: -2.5,
         xMax: 2.0,
@@ -65,12 +56,12 @@ void main() {
         maxIters: 30,
       );
 
-      final pixels = fractal.burningshipSet();
+      final pixels = await fractal.burningshipSet();
       expect(pixels, isA<Uint8List>());
       expect(pixels.length, equals(100 * 100));
     });
 
-    test('burningshipSet respects bounds', () {
+    test('burningshipSet respects bounds', () async {
       final fractal = Fractal(
         xMin: -1.0,
         xMax: 1.0,
@@ -82,7 +73,7 @@ void main() {
         imagP: 0.178174161131,
       );
 
-      final pixels = fractal.burningshipSet();
+      final pixels = await fractal.burningshipSet();
       expect(pixels.length, equals(10 * 10));
     });
   });

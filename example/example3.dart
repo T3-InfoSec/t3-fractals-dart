@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:fractal/fractal.dart';
 import 'package:image/image.dart' as img;
-import 'dart:math';
 
 void main() async {
   // Initialize the fractal generator
@@ -19,12 +18,12 @@ void main() async {
   );
 
   // Parameters for the animation
-  int numFrames = 30; // Total frames
+  int numFrames = 15; // Total frames
   double amplitudeA = 0.25; // Amplitude for real part oscillation
   double amplitudeB = 0.25; // Amplitude for imaginary part oscillation
-  double phaseOffset = pi / 4; // Phase offset
-  double frequencyK = 2; // Frequency multiplier for real part
-  double frequencyL = 2; // Frequency multiplier for imaginary part
+  double phaseOffset = 0; // Phase offset
+  double frequencyK = 0.5; // Frequency multiplier for real part
+  double frequencyL = 0.5; // Frequency multiplier for imaginary part
   int width = 500; // Frame width
   int height = 500; // Frame height
 

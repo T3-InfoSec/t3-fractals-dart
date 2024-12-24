@@ -33,7 +33,7 @@ class Fractal {
   int? maxIters;
 
   // Internal variable for holding image pixels
-  Future<Uint8List>? _imagePixels;
+  late Uint8List _imagePixels;
 
   /// A getter for accessing the image pixel data.
   ///
@@ -41,7 +41,7 @@ class Fractal {
   ///
   /// Returns:
   /// - A [Uint8List] containing the pixel data for the fractal image.
-  Future<Uint8List>? get imagePixels => _imagePixels;
+  Uint8List get imagePixels => _imagePixels;
 
   /// Constructor for initializing the fractal with optional parameters.
   /// Defaults are set for the fractal parameters.
@@ -86,7 +86,7 @@ class Fractal {
   /// - [maxIters]: The maximum number of iterations to compute the fractal.
   ///
   /// Throws [ArgumentError] if an unsupported fractal function is specified.
-  void update({
+  Future<void> update({
     String? funcType,
     double? xMin,
     double? xMax,
@@ -98,7 +98,7 @@ class Fractal {
     int? height,
     int? escapeRadius,
     int? maxIters,
-  }) {
+  }) async {
     // Update parameters if provided
     this.xMin = xMin;
     this.xMax = xMax;
@@ -114,7 +114,7 @@ class Fractal {
 
     // Generate fractal based on the selected function type
     if (this.funcType == burningShip) {
-      _imagePixels = burningshipSet();
+      _imagePixels = await burningshipSet();
     } else {
       throw ArgumentError('$funcType is not supported.');
     }
