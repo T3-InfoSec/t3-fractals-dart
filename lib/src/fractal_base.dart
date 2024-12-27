@@ -33,7 +33,7 @@ class Fractal {
   int? maxIters;
 
   // Internal variable for holding image pixels
-  late Uint8List _imagePixels;
+  Uint8List? _imagePixels;
 
   /// A getter for accessing the image pixel data.
   ///
@@ -41,7 +41,7 @@ class Fractal {
   ///
   /// Returns:
   /// - A [Uint8List] containing the pixel data for the fractal image.
-  Uint8List get imagePixels => _imagePixels;
+  Uint8List? get imagePixels => _imagePixels;
 
   /// Constructor for initializing the fractal with optional parameters.
   /// Defaults are set for the fractal parameters.
